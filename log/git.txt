@@ -1,6 +1,4 @@
-git config --list
-credential.helper=osxkeychain
-init.defaultbranch=main
+git config --global --list
 filter.lfs.process=git-lfs filter-process
 filter.lfs.required=true
 filter.lfs.clean=git-lfs clean -- %f
@@ -12,9 +10,3 @@ credential.https://github.com.helper=
 credential.https://github.com.helper=!/opt/homebrew/bin/gh auth git-credential
 credential.https://gist.github.com.helper=
 credential.https://gist.github.com.helper=!/opt/homebrew/bin/gh auth git-credential
-core.repositoryformatversion=0
-core.filemode=true
-core.bare=false
-core.logallrefupdates=true
-core.ignorecase=true
-core.precomposeunicode=true

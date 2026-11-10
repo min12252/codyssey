@@ -21,6 +21,7 @@ Git: 2.39.3 (Apple Git-146)
 - [x] 볼륨 영속성
 - [x] Git 설정 + VSCode GitHub 연동
 
+<br>
 
 1. 터미널 조작 로그 기록
 ``` bash
@@ -51,6 +52,9 @@ rm new.txt
 # 파일 내용 확인
 cat copy_testFile.txt
 ```
+[터미널 로그](log/터미널조작.png)
+
+<br>
 
 2. 권한
 ```bash
@@ -60,6 +64,9 @@ ls -l
 # 권한 변경
 chmod 700 file.txt
 ```
+[권한 로그](log/권한.png)
+
+<br>
 
 3. Docker
 ```bash
@@ -91,12 +98,31 @@ docker logs test
 # 리소스 확인 
 docker stats --no-stream
 ```
+[도커 로그](log/docker_logs.txt)
+
+<br>
 
 4. Dockerfile 기반 커스텀 이미지 제작, 포드매핑, 볼륨 영속성
-선택한 베이스 이미지: nginx:latest (Nginx 웹 서버 기본 이미지)   
-커스텀 포인트 및 목적:
+
+<br>
+* 선택한 베이스 이미지: nginx:latest (Nginx 웹 서버 기본 이미지)
+<br> 
+* 커스텀 포인트 및 목적:
 기존 Nginx의 기본 환영 페이지(Welcome to nginx!) 대신, 사용자가 직접 작성한 index.html 파일을 도커 이미지 빌드 시점에 컨테이너 내부의 웹 경로(/usr/share/nginx/html/index.html)로 복사(COPY)하도록 설정함.   
 이를 통해 서버가 실행될 때 커스텀 웹페이지가 기본으로 서빙되도록 함.
+<br>
+
+[도커파일 로그](log/dockerfile_custom.txt)
+
+<br>
+
+[web 실행화면](log/dockerfile실행.png)
+
+<br>
+
+[볼륨 영속성](log/볼륨영속성.txt)
+
+<br>
 
 5. run, attach, exec 비교
 ``` bash
@@ -104,25 +130,35 @@ docker run # 새로 만들고 실행
 docker attach # 메인에 접속
 docker exec # 독립적으로 내부 접속
 ```
+
 | 명령어 | 대상 | 하는 일 | 주요쓰임 |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | run | 이미지 | 새 컨테이너 생성 + 실행 | 프로그램을 처음 켤 때 |
-| --- | --- | --- |
 | attach | 실행 중인 컨테이너 | 메인 화면에 그냥 접속 | 돌아가는 상태를 실시간으로 볼 때 |
-| --- | --- | --- |
 | exec | 실행 중인 컨테이너 | 안에서 새로운 명령(bash 등) 실행 | 컨테이너 내부를 직접 탐색하고 싶을 때 |
 
-exec는 exit으로 나와도 컨테이너가 꺼지지 않지만 run,attach는 꺼짐
+* exec는 exit으로 나와도 컨테이너가 꺼지지 않지만 run,attach는 꺼짐
 
-7. git
+6. git
+```bash
+% git config --global user.name
+min12252
+% git config --global user.email
+bbrr7709@gmail.com
+```
+<br>
 
+[깃 연결 확인](log/git.txt)
 
+<br>
+
+[vs code git연동](log/vscode.png)
 
 ## 트러블슈팅
-문제1.
-    원인가설
-    확인
-    해결/대안
+문제1. 
+    * 원인가설
+    * 확인
+    * 해결/대안
 문제2.
     원인가설
     확인
