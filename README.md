@@ -105,11 +105,15 @@ docker stats --no-stream
 4. Dockerfile 기반 커스텀 이미지 제작, 포드매핑, 볼륨 영속성
 
 <br>
+
 * 선택한 베이스 이미지: nginx:latest (Nginx 웹 서버 기본 이미지)
+
 <br> 
+
 * 커스텀 포인트 및 목적:
 기존 Nginx의 기본 환영 페이지(Welcome to nginx!) 대신, 사용자가 직접 작성한 index.html 파일을 도커 이미지 빌드 시점에 컨테이너 내부의 웹 경로(/usr/share/nginx/html/index.html)로 복사(COPY)하도록 설정함.   
 이를 통해 서버가 실행될 때 커스텀 웹페이지가 기본으로 서빙되도록 함.
+
 <br>
 
 [도커파일 로그](log/dockerfile_custom.txt)
@@ -139,6 +143,8 @@ docker exec # 독립적으로 내부 접속
 
 * exec는 exit으로 나와도 컨테이너가 꺼지지 않지만 run,attach는 꺼짐
 
+<br>
+
 6. git
 ```bash
 % git config --global user.name
@@ -154,12 +160,32 @@ bbrr7709@gmail.com
 
 [vs code git연동](log/vscode.png)
 
+<br>
+
 ## 트러블슈팅
-문제1. 
-    * 원인가설
-    * 확인
-    * 해결/대안
-문제2.
-    원인가설
-    확인
-    해결/대안
+문제1.  nginx서버 띄웠는데 html 파일이 안뜨는 문제
+
+* 원인가설
+기본 nginx 화면은 뜨는걸로 봐서 서버의 문제는 아니고 파일에 접근이 안되는 문제라고 예측
+
+* 확인
+Dockerfile 파일 확인
+
+* 해결/대안
+Dockerfile 내에 경로가 잘못 설정되어있어서 수정후 오류 해결
+
+문제2. 컨테이너가 없는데 새로 생성되지 않는 오류
+
+```bash
+% docker run -d -p 8082:80 --name my-web2 my-web
+
+docker: Error response from daemon: Conflict. The container name "/my-web2" is already in use by container "2167d1ec6700d55ea990919749e4e3681b85f6bfeb3c1f5d235ad7cc01038058". You have to remove (or rename) that container to be able to reuse that name.
+```
+* 원인가설
+컨테이너가 생성시 포트 연결이 안되서 에러가 나도 컨테이너는 생성이 되었을거라 예측
+
+* 확인
+docker ps -a 확인
+
+* 해결/대안
+정지된 컨테이너 중에 컨테이너가 있어서 지우고 새로 생성
