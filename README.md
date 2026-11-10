@@ -106,6 +106,31 @@ docker stats --no-stream
 
 <br>
 
+```bash
+# 빌드,이미지 만들기
+% docker build -t my-web
+
+# 포트매핑
+% docker run -d -p 8080:80 --name my-web my-web
+
+# 내 폴더를 컨테이너에 연결 (호스트의 html 디렉터리를 컨테이너 내부의 NGINX 웹 디렉터리에 연결)
+% docker run -d -p 8082:80 --name my-web-live -v ${PWD}:/usr/share/nginx/html nginx
+```
+<br>
+
+```bash
+# 볼륨 생성
+% docker volume create mydata
+
+# 새 컨테이너 생성 및 볼륨 연결
+% docker run -it --name vol-test -v mydata:/data ubuntu
+
+# 볼륨 리스트 확인
+% docker volume ls
+```
+
+<br>
+
 * 선택한 베이스 이미지: nginx:latest (Nginx 웹 서버 기본 이미지)
 
 <br> 

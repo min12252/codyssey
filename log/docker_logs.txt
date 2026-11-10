@@ -111,6 +111,8 @@ Server:
  Live Restore Enabled: false
  Firewall Backend: iptables
 
+
+# docker hello world실행
 haru@MacBook-Air ~ % docker run hello-world
 
 Hello from Docker!
