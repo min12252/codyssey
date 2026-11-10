@@ -1,0 +1,51 @@
+# 볼륨 생성 (Docker가 관리하는 저장 공간)
+haru@MacBook-Air ~/dev % docker volume create mydata
+mydata
+
+# 컨테이너 생성, 볼륨 연결
+haru@MacBook-Air ~/dev % docker run -it --name vol-test -v mydata:/data ubuntu
+root@5b2d1d329bf2:/# echo "hello volume" > /data/memo.txt
+root@5b2d1d329bf2:/# exit
+exit
+
+# 컨테이너 다시 확인
+haru@MacBook-Air ~/dev % docker start vol-test
+vol-test
+haru@MacBook-Air ~/dev % docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED          STATUS         PORTS                                     NAMES
+5b2d1d329bf2   ubuntu         "/bin/bash"               26 seconds ago   Up 7 seconds                                             vol-test
+f528239efa9b   nginx:latest   "/docker-entrypoint.…"   16 hours ago     Up 16 hours    0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   nginx-monitor
+haru@MacBook-Air ~/dev % docker exec -it vol-test bash
+root@5b2d1d329bf2:/# cd data
+root@5b2d1d329bf2:/data# ls
+memo.txt
+root@5b2d1d329bf2:/data# cat memo.txt
+hello volume
+root@5b2d1d329bf2:/data# exit
+exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug vol-test
+    Learn more at https://docs.docker.com/go/debug-cli/
+
+# 컨테이너 삭제
+haru@MacBook-Air ~/dev % docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED              STATUS              PORTS                                     NAMES
+5b2d1d329bf2   ubuntu         "/bin/bash"               About a minute ago   Up About a minute                                             vol-test
+f528239efa9b   nginx:latest   "/docker-entrypoint.…"   16 hours ago         Up 16 hours         0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   nginx-monitor
+haru@MacBook-Air ~/dev % docker stop vol-test
+vol-test
+haru@MacBook-Air ~/dev % docker rm vol-test
+vol-test
+haru@MacBook-Air ~/dev % docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED        STATUS        PORTS                                     NAMES
+f528239efa9b   nginx:latest   "/docker-entrypoint.…"   16 hours ago   Up 16 hours   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   nginx-monitor
+
+# 데이터 확인 (컨테이너 삭제 후에도 남아있음)
+haru@MacBook-Air ~/dev % docker run -it --rm -v mydata:/data ubuntu cat /data/memo.txt
+hello volume
+
+# 볼륨 리스트 확인
+haru@MacBook-Air ~/dev % docker volume ls
+DRIVER    VOLUME NAME
+local     mydata

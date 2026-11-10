@@ -1,0 +1,107 @@
+haru@MacBook-Air ~/dev % cd codyssey
+haru@MacBook-Air ~/dev/codyssey % mkdir web_test
+haru@MacBook-Air ~/dev/codyssey % cd web_test
+
+# 파일만들기
+haru@MacBook-Air ~/dev/codyssey/web_test % touch index.html
+haru@MacBook-Air ~/dev/codyssey/web_test % touch Dockerfile
+haru@MacBook-Air ~/dev/codyssey/web_test % ls
+Dockerfile	index.html
+
+# 빌드하기/이미지만들기
+haru@MacBook-Air ~/dev/codyssey/web_test % docker build -t my-web .
+[+] Building 0.2s (7/7) FINISHED                                                                                docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                            0.0s
+ => => transferring dockerfile: 121B                                                                                            0.0s
+ => [internal] load metadata for docker.io/library/nginx:latest                                                                 0.1s
+ => [internal] load .dockerignore                                                                                               0.0s
+ => => transferring context: 2B                                                                                                 0.0s
+ => [internal] load build context                                                                                               0.0s
+ => => transferring context: 281B                                                                                               0.0s
+ => CACHED [1/2] FROM docker.io/library/nginx:latest@sha256:5ab5b0b01097420873a3f3330f44248e34a3c2a3e8d5ee30658aeae8cb7435da    0.0s
+ => => resolve docker.io/library/nginx:latest@sha256:5ab5b0b01097420873a3f3330f44248e34a3c2a3e8d5ee30658aeae8cb7435da           0.0s
+ => [2/2] COPY index.html /Users/haru/dev/codyssey/web_test/index.html                                                          0.0s
+ => exporting to image                                                                                                          0.1s
+ => => exporting layers                                                                                                         0.0s
+ => => exporting manifest sha256:8b8cc52f34d693dcc1900f6b496cd1e0bb590d64ffbff92e8f58ef7f46b17d87                               0.0s
+ => => exporting config sha256:35ea1b49d14aa7010b929e2228b028d69451f11638e8f9fc75ce5971816c53db                                 0.0s
+ => => exporting attestation manifest sha256:d3b94501d621781ea2874dc8135ed4cae17ee5f079ada2dfb04bee90c527c066                   0.0s
+ => => exporting manifest list sha256:b5a6608569e9acb94b6f7dcc7a2751bf068ec23ed4f5bc2e88ec1ff74a0fa6e7                          0.0s
+ => => naming to docker.io/library/my-web:latest                                                                                0.0s
+ => => unpacking to docker.io/library/my-web:latest                                                                             0.0s
+
+# 포트매핑
+haru@MacBook-Air ~/dev/codyssey/web_test % docker run -d -p 8080:80 --name my-web my-web
+869e00640a6268bdda41affaaf5926618d0863226369ad4e408dfae17e2ada6e
+
+# 실행중임을 확인
+haru@MacBook-Air ~/dev/codyssey/web_test % docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED         STATUS         PORTS                                     NAMES
+869e00640a62   my-web         "/docker-entrypoint.…"   5 seconds ago   Up 5 seconds   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-web
+f528239efa9b   nginx:latest   "/docker-entrypoint.…"   3 hours ago     Up 3 hours     0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   nginx-monitor
+
+# 다른 포트로 동시에 실행
+haru@MacBook-Air ~/dev/codyssey/web_test % docker run -d -p 8081:80 --name my-web2 my-web
+2167d1ec6700d55ea990919749e4e3681b85f6bfeb3c1f5d235ad7cc01038058
+
+
+# 포트에러
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint my-web2 (61fc037af0de7c01774b2114546154facec260d2d63fde23723271265fcbcfa3): Bind for 0.0.0.0:8081 failed: port is already allocated
+
+Run 'docker run --help' for more information
+
+What's next:
+    Debug this container error with Gordon → docker ai "help me fix this container error"
+
+
+# 이름 겹쳐서 에러
+haru@MacBook-Air ~/dev/codyssey/web_test % docker run -d -p 8082:80 --name my-web2 my-web
+docker: Error response from daemon: Conflict. The container name "/my-web2" is already in use by container "2167d1ec6700d55ea990919749e4e3681b85f6bfeb3c1f5d235ad7cc01038058". You have to remove (or rename) that container to be able to reuse that name.
+
+Run 'docker run --help' for more information
+
+What's next:
+    Debug this container error with Gordon → docker ai "help me fix this container error"
+
+
+# 에러 해결 (지우고 다시 실행)
+haru@MacBook-Air ~/dev/codyssey/web_test % docker rm my-web2
+my-web2
+haru@MacBook-Air ~/dev/codyssey/web_test % docker run -d -p 8082:80 --name my-web2 my-web
+d2f6593e544e6f095376e76c245ff1bda647aea057443ccc897b415bc242932e
+
+
+haru@MacBook-Air ~/dev/codyssey/web_test % docker stop my-web my-web2
+my-web
+my-web2
+
+haru@MacBook-Air ~/dev/codyssey/web_test % docker start my-web my-web2
+my-web
+my-web2
+haru@MacBook-Air ~/dev/codyssey/web_test % docker stop my-web my-web2
+my-web
+my-web2
+haru@MacBook-Air ~/dev/codyssey/web_test % docker rm my-web my-web2
+my-web
+my-web2
+
+
+# 바인드 마운트: 내 폴더를 컨테이너 연결
+haru@MacBook-Air ~/dev/codyssey/web_test % docker run -d -p 8082:80 --name my-web-live -v ${PWD}:/usr/share/nginx/html nginx
+28552e05680147eda77e6658d1a747c2652d929564fbfe1186d97c5d44cd9906
+
+# 실행 확인
+haru@MacBook-Air ~/dev/codyssey/web_test % docker ps -a
+CONTAINER ID   IMAGE          COMMAND                   CREATED             STATUS                         PORTS                                     NAMES
+28552e056801   nginx          "/docker-entrypoint.…"   15 seconds ago      Up 14 seconds                  0.0.0.0:8082->80/tcp, [::]:8082->80/tcp   my-web-live
+c71117e40042   hello-world    "/hello"                  About an hour ago   Exited (0) About an hour ago                                             condescending_wozniak
+320c2c726b23   hello-world    "/hello"                  About an hour ago   Exited (0) About an hour ago                                             sad_greider
+f528239efa9b   nginx:latest   "/docker-entrypoint.…"   4 hours ago         Up 4 hours                     0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   nginx-monitor
+87bf7d15b510   ubuntu         "bash"                    35 hours ago        Exited (0) 35 hours ago                                                  volume-test2
+2603efbec050   ubuntu         "bash"                    36 hours ago        Exited (137) 35 hours ago                                                ecstatic_ellis
+3203cf2ea50a   hello-world    "/hello"                  36 hours ago        Exited (0) 36 hours ago                                                  agitated_wu
+
+haru@MacBook-Air ~/dev/codyssey/web_test % docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED          STATUS          PORTS                                     NAMES
+28552e056801   nginx          "/docker-entrypoint.…"   34 seconds ago   Up 34 seconds   0.0.0.0:8082->80/tcp, [::]:8082->80/tcp   my-web-live
+f528239efa9b   nginx:latest   "/docker-entrypoint.…"   4 hours ago      Up 4 hours      0.0.0.0:8081->80/tcp, [::]:8081->80/tcp   nginx-monitor
